@@ -1,0 +1,17 @@
+{
+  "name": "sato-hub-skill",
+  "owner": { "name": "Sato Hub", "url": "https://satohub.ai" },
+  "metadata": { "description": "Sato Hub — scored index of onchain-agent tooling, agent-economy numbers and Agent Passports." },
+  "plugins": [
+    {
+      "name": "sato-hub",
+      "source": "./",
+      "description": "Query Sato Hub — the scored, daily-rebuilt index of onchain-agent tooling, agent-economy numbers and Agent Passports. Read-only, keyless.",
+      "version": "1.1.0",
+      "author": { "name": "Sato Hub", "url": "https://satohub.ai" },
+      "homepage": "https://satohub.ai/mcp",
+      "license": "MIT",
+      "category": "web3"
+    }
+  ]
+}

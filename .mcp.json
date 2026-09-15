@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "satohub": {
+      "type": "http",
+      "url": "https://satohub.ai/api/mcp"
+    }
+  }
+}

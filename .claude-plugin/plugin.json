@@ -1,0 +1,13 @@
+{
+  "name": "sato-hub",
+  "displayName": "Sato Hub",
+  "version": "1.1.0",
+  "description": "Query Sato Hub — the scored, daily-rebuilt index of onchain-agent tooling (frameworks, MCP servers, wallets, x402, ERC-8004, agent skills), agent-economy numbers and Agent Passports — plus Preflight checks and Sato Route venue picks with the fee disclosed. Read-only, keyless, non-custodial.",
+  "author": { "name": "Sato Hub", "url": "https://satohub.ai" },
+  "homepage": "https://satohub.ai/mcp",
+  "repository": "https://github.com/satohubai/sato-hub-skill",
+  "license": "MIT",
+  "keywords": ["onchain agents", "crypto agents", "mcp", "x402", "erc-8004", "wallets", "sato score", "agent economy", "web3"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}
