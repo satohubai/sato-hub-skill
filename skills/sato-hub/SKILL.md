@@ -1,7 +1,7 @@
 ---
 name: sato-hub
+version: 1.1.0
 description: Query Sato Hub, the scored, daily-rebuilt index of onchain-agent tooling (frameworks, MCP servers, wallets, x402 and stablecoin payment rails, ERC-8004 identity, trading venues, agent skills) plus measured agent-economy numbers and Agent Passports. Use for questions about what to build a crypto agent from, which tools support a chain or standard, whether a crypto-agent project is real, maintained and open source, or for a citable on-chain adoption figure. Read-only, keyless, via the hosted MCP server at https://satohub.ai/api/mcp or a bundled curl script.
-license: MIT
 compatibility: Needs outbound network access to satohub.ai. The bundled script needs bash and curl (jq optional, recommended). Works best when the client already has the Sato Hub MCP server connected as "satohub".
 metadata:
   author: Sato Hub
