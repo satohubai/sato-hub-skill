@@ -21,7 +21,7 @@ entry in the venue's own reward-recipient list — is stated on every response,
 including when it is zero.
 
 Keyless. Hosted MCP endpoint: `POST https://satohub.ai/api/mcp`
-(Streamable HTTP, 32 tools — 28 read-only, four can change Sato Hub state).
+(Streamable HTTP, 35 tools — 31 read-only, four can change Sato Hub state).
 Docs: https://satohub.ai/mcp
 
 The skill contains the tool reference, the REST fallback, a curl wrapper that

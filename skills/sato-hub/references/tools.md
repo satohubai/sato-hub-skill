@@ -1,7 +1,7 @@
-# Sato Hub MCP — the 32 tools
+# Sato Hub MCP — the 35 tools
 
 Endpoint: `POST https://satohub.ai/api/mcp` (Streamable HTTP, JSON-RPC 2.0,
-28 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no auth). All tool names start with `onchain_agent_`. Most tools
+31 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no auth). All tool names start with `onchain_agent_`. Most tools
 accept `response_format: "markdown" | "json"` (default markdown). Every record
 carries `sato_url` and, where scored, `verify_url` — cite `sato_url`.
 
@@ -31,6 +31,11 @@ carries `sato_url` and, where scored, `verify_url` — cite `sato_url`.
 
 - `onchain_agent_search_agents` — search agents whose operators registered them for a Sato Agent Passport (distinct from the directory). Only review-listed agents are returned. Args: `query`, `chain`, `agent_type`, `x402_only`, `limit`.
 - `onchain_agent_get_agent_passport` — one agent's `sato.agent.manifest/v1`: identity, agent types, chains, model/framework, the directory stack it runs on, links, x402 payment metadata, verification and liveness status. Args: `slug`.
+
+## Agent packages (published, sealed versions)
+
+- `onchain_agent_search_listings` — find a ready-made onchain agent package to download or fork: each result is the public view of one sealed, immutable version (task, inputs/outputs, required permissions, model support "configured, not evaluated", license, evidence freshness for that digest). Args: `query`, `recipe`, `license`, `cursor`, `limit`.
+- `onchain_agent_inspect_listing` — one package by slug before recommending a download or fork: task, description, creator display name, version digest and signing state, recipe, input/output schemas, required services and permissions, model support. Args: `slug`.
 
 ## Skills
 
@@ -86,7 +91,9 @@ nothing.
 - `onchain_agent_submit_project` — WRITE. Files a directory submission into the same queue and daily triage as the /submit form; duplicates return the existing entry. Submission is not verification; profit/safety copy is refused. Args: `name`, `website_url`, `github_url`, `category`, `description`.
 - `onchain_agent_register_agent` — WRITE. An agent issues itself a Passport: call once for the challenge, sign with the agent's wallet key, call again. Unsigned registrations wait for a person. The signature proves control of the key only; every passport is Self-Reported. Args: `name`, `wallet`, `signature`, …
 
-## News, changes, wiki
+## News, changes, wiki, freshness
+
+- `onchain_agent_get_data_freshness` — how old the data behind an answer is: per data surface (directory activity, news, Sato Score, liveness, snapshots, ERC-8004 counts, agent-economy measurements, x402, LP pools, skills, deploy verification…) the last successful collection, the last attempt and how it ended, the expected cadence, whether it is late (older than 1.5× its cadence) and the next run. Never an invented date: no recorded success reads null. Args: `surface`.
 
 - `onchain_agent_get_news` — dated, source-attributed releases, announcements and reputable RSS, filtered to the agent economy. Args: `kind` (release|tweet|news|research), `chain`, `limit`, `offset`.
 - `onchain_agent_recent_changes` — the Listing History: status flips, verification grants, Sato Score tier moves, liveness changes, releases, enrichment. Omit `slug` for the site-wide feed. Args: `slug`, `days` (1–90), `limit`.
