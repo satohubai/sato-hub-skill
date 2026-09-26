@@ -12,34 +12,61 @@ import { pathToFileURL } from "node:url";
 
 const ENDPOINT = process.env.SATO_CHECK_URL || "https://satohub.ai/api/check/install";
 const TIMEOUT_MS = 4000;
-const UA = "sato-check-hook/1.0";
+// Override for our own sessions (SatoHub-…) so they are not counted as outside adoption.
+const UA = process.env.SATO_CHECK_UA || "sato-check-hook/1.0";
 
+// Each pattern is anchored at the START of a command segment (after optional
+// env assignments / sudo / a subshell paren), so an installer named inside a
+// quoted string — a commit message, a grep pattern, a script body — never
+// triggers the hook (found dogfooding in our own sessions, 2026-09-26).
 const INSTALL_PATTERNS = [
-  /\b(?:npm|pnpm|bun)\s+(?:[\w-]+\s+)*?(?:add|install|i)\b/,
-  /\byarn\s+(?:global\s+)?add\b/,
-  /\bnpx\s+(?:-y|--yes)\b/,
-  /\bpip3?\s+install\b/,
-  /\bpython3?\s+-m\s+pip\s+install\b/,
-  /\buvx\s+\S/,
-  /\buv\s+(?:tool\s+install|pip\s+install|add)\b/,
-  /\bpipx\s+(?:run|install)\b/,
-  /\bclaude\s+mcp\s+add\b/,
-  /\b(?:codex|gemini)\s+mcp\s+add\b/,
-  /\bclawhub\s+install\b/,
-  /\bnpx\s+skills\s+add\b/,
+  /^(?:npm|pnpm|bun)\s+(?:-{1,2}[\w=-]+\s+)*(?:add|install|i|in)\s+\S/,
+  /^yarn\s+(?:global\s+)?add\s+\S/,
+  /^pip3?\s+install\s+\S/,
+  /^python3?\s+-m\s+pip\s+install\s+\S/,
+  /^uvx\s+\S/,
+  /^uv\s+(?:tool\s+install|pip\s+install|add)\s+\S/,
+  /^pipx\s+(?:run|install)\s+\S/,
+  /^(?:claude|codex|gemini)\s+mcp\s+add\s+\S/,
+  /^clawhub\s+install\s+\S/,
+  /^npx\s+skills\s+add\s+\S/,
 ];
 
-/** True when the shell command looks like an install we can check. Bare `npm install` (no target) is skipped. */
+/**
+ * `npx`/`bunx` fetches a package only via a flag BEFORE the package name
+ * (-y, --yes, -p, --package) or a pinned `name@version`. `npx tsc -p .` is
+ * TypeScript's own -p on a local bin, not an install.
+ */
+export function npxFetches(segment) {
+  const m = segment.match(/^(?:npx|bunx)\s+(.*)$/);
+  if (!m) return false;
+  for (const t of m[1].split(/\s+/)) {
+    if (/^(-y|--yes|-p|--package)$/.test(t) || /^--package=/.test(t)) return true;
+    if (t.startsWith("-")) continue;
+    return /^@?[^@\s]+@\S+$/.test(t);
+  }
+  return false;
+}
+
+/** Drop quoted strings so text inside them is never read as a command. */
+function stripQuoted(command) {
+  return command.replace(/'[^']*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
+}
+
+/** The command segments that install something, cleaned to their command position. */
+export function installSegments(command) {
+  if (typeof command !== "string" || !command.trim()) return [];
+  const out = [];
+  for (const seg of stripQuoted(command).split(/&&|\|\||;|\||\n/)) {
+    const s = seg.trim().replace(/^[({]+\s*/, "").replace(/^(?:sudo\s+|[A-Z_][A-Z0-9_]*=\S*\s+)+/, "").trim();
+    if (INSTALL_PATTERNS.some((re) => re.test(s)) || npxFetches(s)) out.push(s);
+  }
+  return out;
+}
+
+/** True when the shell command installs something we can check. */
 export function isInstallCommand(command) {
-  if (typeof command !== "string" || !command.trim()) return false;
-  const segments = command.split(/&&|\|\||;|\|/);
-  return segments.some((seg) => {
-    const s = seg.trim();
-    if (!INSTALL_PATTERNS.some((re) => re.test(s))) return false;
-    // `npm install` / `pnpm i` / `bun install` with no package: installs the lockfile, nothing new.
-    if (/^(?:npm|pnpm|bun|yarn)\s+(?:install|i|ci)(?:\s+-{1,2}[\w=-]+)*\s*$/.test(s)) return false;
-    return true;
-  });
+  return installSegments(command).length > 0;
 }
 
 const LABELS = {
@@ -105,9 +132,10 @@ async function readStdin() {
 async function main() {
   try {
     const input = JSON.parse(await readStdin());
-    const command = input?.tool_input?.command;
-    if (!isInstallCommand(command)) return;
-    const out = decide(await checkCommand(command));
+    const segments = installSegments(input?.tool_input?.command);
+    if (!segments.length) return;
+    // Only the install segments leave the machine — never the rest of the command line.
+    const out = decide(await checkCommand(segments.join(" && ")));
     // Wait for the write to flush: Claude Code reads hook stdout through a pipe,
     // and exiting before a pipe write drains drops it (found in the 1.2.0 test).
     if (out) await new Promise((resolve) => process.stdout.write(JSON.stringify(out), resolve));
