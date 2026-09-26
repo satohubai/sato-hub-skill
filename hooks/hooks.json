@@ -1,0 +1,13 @@
+{
+  "description": "Sato Check: before an install command runs, show what the package, MCP server or skill does with keys and money.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/check-install.mjs\"", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}

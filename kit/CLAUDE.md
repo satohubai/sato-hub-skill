@@ -31,3 +31,5 @@ source and see its current status. `verification_status` distinguishes
 self-reported from verified — never collapse the two. `null` means unknown, not
 zero. The Sato Score is a 0–100 signal of how open, active and verifiable a
 product is; it is not a safety, quality or returns grade.
+
+Before adding a crypto package, MCP server or skill, call onchain_agent_check_install (or GET https://satohub.ai/api/check?target=…) and show the user the four answers.

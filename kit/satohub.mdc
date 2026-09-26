@@ -38,3 +38,4 @@ One click: https://satohub.ai/install
 - `null` means unknown, never zero.
 - The Sato Score measures how open, active and verifiable a product is. It is not
   a safety, quality or returns grade, and must not be described as one.
+- Before adding a crypto package, MCP server or skill, call onchain_agent_check_install (or GET https://satohub.ai/api/check?target=…) and show the user the four answers.

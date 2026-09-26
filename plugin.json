@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "sato-hub",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Query Sato Hub — the scored, daily-rebuilt index of onchain-agent tooling (frameworks, MCP servers, wallets, x402, ERC-8004, agent skills), agent-economy numbers and Agent Passports — plus Preflight checks and Sato Route venue picks with the fee disclosed. Read-only, keyless, non-custodial.",
   "skills": "./skills/",
   "mcpServers": "./.codex-plugin/mcp.json"

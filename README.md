@@ -21,7 +21,7 @@ entry in the venue's own reward-recipient list — is stated on every response,
 including when it is zero.
 
 Keyless. Hosted MCP endpoint: `POST https://satohub.ai/api/mcp`
-(Streamable HTTP, 35 tools — 31 read-only, four can change Sato Hub state).
+(Streamable HTTP, 36 tools — 32 read-only, four can change Sato Hub state).
 Docs: https://satohub.ai/mcp
 
 The skill contains the tool reference, the REST fallback, a curl wrapper that
@@ -91,6 +91,36 @@ folder), and add the server from `.mcp.json` to `.cursor/mcp.json`.
 directory. `skills/sato-hub/scripts/query.sh` needs only bash + curl.
 
 **Gemini CLI** — `gemini-extension.json` declares the MCP server.
+
+## Install check hook (Claude Code)
+
+The plugin ships a `PreToolUse` hook (`hooks/hooks.json` → `hooks/check-install.mjs`,
+zero dependencies, Node 18+). When a Bash command installs something —
+`npm|pnpm|yarn|bun add|install`, `npx -y`, `pip install`, `uvx`, `pipx run`,
+`claude mcp add`, skill installs — it sends **only the command text** to
+`POST https://satohub.ai/api/check/install` (4 s timeout) and shows the four
+answers for each package, MCP server or skill:
+
+- Does it take your key?
+- Does your key leave?
+- Can it move funds on its own?
+- What changed?
+
+It always allows the command, with one exception you opt into: with
+`SATO_CHECK_BLOCK=1` set, it blocks when a test key Sato Hub planted was
+observed being sent off the machine. A network error, a timeout or an
+unrecognised command means it says nothing and lets the command run.
+`unknown` is an answer, not a warning.
+
+**Codex / OpenClaw / other agents:** no hook format is wired here yet. Run the
+same check by hand before an install:
+
+```sh
+curl -s -X POST https://satohub.ai/api/check/install \
+  -H 'content-type: application/json' -d '{"command":"npm i <package>"}'
+```
+
+or call the MCP tool `onchain_agent_check_install`.
 
 ## Use
 

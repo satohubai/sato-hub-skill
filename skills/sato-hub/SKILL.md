@@ -1,7 +1,7 @@
 ---
 name: sato-hub
-version: 1.1.2
-description: Query Sato Hub, the scored, daily-rebuilt index of onchain-agent tooling (frameworks, MCP servers, wallets, x402 and stablecoin payment rails, ERC-8004 identity, trading venues, agent skills) plus measured agent-economy numbers and Agent Passports. Use for questions about what to build a crypto agent from, which tools support a chain or standard, whether a crypto-agent project is real, maintained and open source, or for a citable on-chain adoption figure. Read-only, keyless, via the hosted MCP server at https://satohub.ai/api/mcp or a bundled curl script.
+version: 1.2.0
+description: Query Sato Hub, the scored, daily-rebuilt index of onchain-agent tooling (frameworks, MCP servers, wallets, x402 and stablecoin payment rails, ERC-8004 identity, trading venues, agent skills) plus measured agent-economy numbers and Agent Passports. Use for questions about what to build a crypto agent from, which tools support a chain or standard, whether a crypto-agent project is real, maintained and open source, or for a citable on-chain adoption figure. Also Sato Check: before a crypto package, MCP server or skill is installed, what it can do with the agent's keys and money. Read-only, keyless, via the hosted MCP server at https://satohub.ai/api/mcp or a bundled curl script.
 compatibility: Needs outbound network access to satohub.ai. The bundled script needs bash and curl (jq optional, recommended). Works best when the client already has the Sato Hub MCP server connected as "satohub".
 metadata:
   author: Sato Hub
@@ -30,6 +30,9 @@ It is not a safety, quality or returns grade.
 - Comparing two listings on the same axes; explaining a published number.
 - Checking what a crypto agent skill does (hosts contacted, key handling,
   remote-to-shell) before installing it.
+- **Sato Check, before you install**: for a crypto package, MCP server or skill
+  — does it take your key, does your key leave, can it move funds on its own,
+  what changed since the last version.
 - Looking up a registered agent's Agent Passport.
 - **Before you act**: checking a repo, package, MCP endpoint, ERC-8004 agent or
   ERC-20 token against what is on record (Preflight), choosing a swap venue or
@@ -49,7 +52,7 @@ evidence and every record links to a citable page with its current state.
    ```sh
    scripts/query.sh search_resources '{"query":"x402","limit":3}'
    scripts/query.sh get_resource '{"slug":"x402","response_format":"json"}'
-   scripts/query.sh tools                        # list the 25 tools
+   scripts/query.sh tools                        # list the tools
    scripts/query.sh preflight '{"repo":"coinbase/agentkit"}'
    scripts/query.sh build_plan '{"goal":"a Base agent that pays for APIs in USDC"}'
    scripts/query.sh rest '/api/export/index.json?chain=Base'
@@ -102,8 +105,14 @@ than a component to build one from:
 - `onchain_agent_get_metrics` — the ERC-8004 registered-agent count read from
   mainnet and the curated project-token index.
 
-**Before you act — Preflight and Sato Route** (read-only; see
+**Before you act — Sato Check, Preflight and Sato Route** (read-only; see
 [references/examples.md](references/examples.md) §7–12)
+- `onchain_agent_check_install` — an install command (`npm i …`, `npx -y …`,
+  `pip install …`, `claude mcp add …`) or an MCP config block → per dependency,
+  four answers: does it take your key, does your key leave, can it move funds on
+  its own, what changed. Each backed by evidence classed declared / traced /
+  observed. It describes; it is never a safety rating. Show the user the four
+  answers before installing.
 - `onchain_agent_preflight` — one target (`repo`, `package`, `endpoint`,
   `agent`, or `token` + `chain`) → `go | caution | no | unknown`, the rule id
   that decided it, and one evidence line per check naming the field it was read

@@ -23,3 +23,5 @@ Always cite the record's `sato_url` — it is the canonical page and shows the
 current status. `Self-Reported` is not verified. `null` means unknown, never
 zero. The Sato Score measures how open, active and verifiable a product is; it
 is not a safety, quality or returns grade.
+
+Before adding a crypto package, MCP server or skill, call onchain_agent_check_install (or GET https://satohub.ai/api/check?target=…) and show the user the four answers.
