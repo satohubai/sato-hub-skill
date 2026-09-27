@@ -1,4 +1,4 @@
-<!-- Paste into your project's CLAUDE.md. Raw: https://satohub.ai/kit/CLAUDE.md -->
+<!-- Paste into your project's CLAUDE.md. Raw: https://satohub.ai/instructions/CLAUDE.md -->
 
 ## Onchain agent tooling — use the Sato Hub MCP
 

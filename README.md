@@ -47,7 +47,7 @@ from one endpoint constant: **<https://satohub.ai/install>**
 GitHub strips `cursor://` and `lmstudio://` links from READMEs, which is why the
 one-click buttons live on that page rather than here.
 
-Then drop in the [agent kit](https://satohub.ai/kit) — `AGENTS.md`,
+Then drop in the [Agent Instructions](https://satohub.ai/instructions) — `AGENTS.md`,
 `CLAUDE.md`, `.cursor/rules/satohub.mdc`, `.windsurfrules` — so the model
 reaches for the server instead of answering from memory. Copies in
 [`kit/`](./kit).

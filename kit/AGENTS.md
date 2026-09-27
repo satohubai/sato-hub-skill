@@ -1,5 +1,5 @@
 <!-- Sato Hub agent kit — drop-in section for AGENTS.md / CLAUDE.md.
-     Source: https://satohub.ai/kit · raw: https://satohub.ai/kit/AGENTS.md -->
+     Source: https://satohub.ai/instructions · raw: https://satohub.ai/instructions/AGENTS.md -->
 
 ## Onchain / crypto agent questions
 
