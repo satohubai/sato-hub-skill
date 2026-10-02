@@ -21,7 +21,7 @@ entry in the venue's own reward-recipient list — is stated on every response,
 including when it is zero.
 
 Keyless. Hosted MCP endpoint: `POST https://satohub.ai/api/mcp`
-(Streamable HTTP, 36 tools — 32 read-only, four can change Sato Hub state).
+(Streamable HTTP; most tools only read, and a few can change Sato Hub state — the live list is at https://satohub.ai/mcp).
 Docs: https://satohub.ai/mcp
 
 The skill contains the tool reference, the REST fallback, a curl wrapper that
@@ -110,6 +110,9 @@ It always allows the command, with one exception you opt into: with
 `SATO_CHECK_BLOCK=1` set, it blocks when a test key Sato Hub planted was
 observed being sent off the machine. A network error, a timeout or an
 unrecognised command means it says nothing and lets the command run.
+Two more environment variables exist for testing: `SATO_CHECK_URL` points
+the hook at a different check endpoint, and `SATO_CHECK_UA` sets its
+user-agent.
 `unknown` is an answer, not a warning.
 
 **Codex / OpenClaw / other agents:** no hook format is wired here yet. Run the
