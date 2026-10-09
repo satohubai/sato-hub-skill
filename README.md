@@ -15,13 +15,12 @@ Preflight verdicts and a first action).
 
 **Non-custodial.** Nothing in this skill signs, holds a key, deploys, relays or
 moves funds. A route returns calldata or a config the caller reads and signs
-itself; a route that is never signed costs nothing. The Sato fee — 3 bps
-stable-to-stable and 15 bps on any volatile leg for swaps, and for launches one
-entry in the venue's own reward-recipient list — is stated on every response,
-including when it is zero.
+itself; a route that is never signed costs nothing. The Sato fee is stated on
+every response, including when it is zero. Sato Route swaps cost 3 bps stable-to-stable, 15 bps with any volatile leg and 25 bps cross-chain, taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
+Everything that costs money is listed at https://satohub.ai/pricing.
 
 Keyless. Hosted MCP endpoint: `POST https://satohub.ai/api/mcp`
-(Streamable HTTP; most tools only read, and a few can change Sato Hub state — the live list is at https://satohub.ai/mcp).
+(Streamable HTTP, 40 tools — 36 read-only, four can change Sato Hub state).
 Docs: https://satohub.ai/mcp
 
 The skill contains the tool reference, the REST fallback, a curl wrapper that
@@ -42,12 +41,12 @@ or [VS Code Insiders](https://insiders.vscode.dev/redirect/mcp/install?name=sato
 
 **Cursor, Windsurf, Zed, Cline, Continue, JetBrains, LM Studio, Goose, Warp,
 Claude Desktop** — deep links and the exact config block for each, generated
-from one endpoint constant: **<https://satohub.ai/install>**
+from one endpoint constant: **<https://satohub.ai/mcp#install>**
 (machine-readable at [`/api/install.json`](https://satohub.ai/api/install.json)).
 GitHub strips `cursor://` and `lmstudio://` links from READMEs, which is why the
 one-click buttons live on that page rather than here.
 
-Then drop in the [Agent Instructions](https://satohub.ai/instructions) — `AGENTS.md`,
+Then drop in the [agent kit](https://satohub.ai/kit) — `AGENTS.md`,
 `CLAUDE.md`, `.cursor/rules/satohub.mdc`, `.windsurfrules` — so the model
 reaches for the server instead of answering from memory. Copies in
 [`kit/`](./kit).
@@ -110,9 +109,6 @@ It always allows the command, with one exception you opt into: with
 `SATO_CHECK_BLOCK=1` set, it blocks when a test key Sato Hub planted was
 observed being sent off the machine. A network error, a timeout or an
 unrecognised command means it says nothing and lets the command run.
-Two more environment variables exist for testing: `SATO_CHECK_URL` points
-the hook at a different check endpoint, and `SATO_CHECK_UA` sets its
-user-agent.
 `unknown` is an answer, not a warning.
 
 **Codex / OpenClaw / other agents:** no hook format is wired here yet. Run the

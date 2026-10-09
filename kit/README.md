@@ -12,8 +12,8 @@ server when a question is about onchain agents and what to build them from.
 
 Each is a section, not a whole file — paste it into what you already have.
 
-Server: `https://satohub.ai/api/mcp` — Streamable HTTP, read-only, no auth, no key.
-One-click install for every client: <https://satohub.ai/install>.
+Server: `https://satohub.ai/api/mcp` — Streamable HTTP, no key. Most tools only read; the few that can change Sato Hub state say so in their annotations, and none signs or moves funds.
+One-click install for every client: <https://satohub.ai/mcp#install>.
 
 Raw files: <https://satohub.ai/instructions/AGENTS.md>, `/instructions/CLAUDE.md`,
 `/instructions/satohub.mdc`, `/instructions/windsurfrules`.

@@ -1,7 +1,7 @@
-# Sato Hub MCP — the 36 tools
+# Sato Hub MCP — the 40 tools
 
 Endpoint: `POST https://satohub.ai/api/mcp` (Streamable HTTP, JSON-RPC 2.0,
-31 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no auth). All tool names start with `onchain_agent_`. Most tools
+36 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no key). All tool names start with `onchain_agent_`. Most tools
 accept `response_format: "markdown" | "json"` (default markdown). Every record
 carries `sato_url` and, where scored, `verify_url` — cite `sato_url`.
 
@@ -65,11 +65,10 @@ nothing.
 - **Non-custodial, always.** Sato Route never signs, holds, moves or broadcasts
   funds, never deploys a contract, never relays or settles an x402 payment. The
   caller signs with its own signer.
-- **The fee is disclosed on every response, including when it is zero.** Swap:
-  3 bps stable-to-stable, 15 bps on any volatile leg, taken as a parameter on
-  the aggregator's own quote inside the swap transaction. Launch: one entry in
-  the venue's own reward-recipient list — deployer takes `10000 - bps`, Sato
-  takes `bps`, and at 0 bps no Sato recipient appears in the config at all.
+- **The fee is disclosed on every response, including when it is zero.**
+  Sato Route swaps cost 3 bps stable-to-stable, 15 bps with any volatile leg and 25 bps cross-chain, taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
+  On a launch the deployer takes `10000 - bps` and Sato takes `bps`, and at 0 bps no
+  Sato recipient appears in the config at all.
 - **A verdict names what was checked and when.** Preflight is not a security
   review, an audit, a token screen or a forecast, and `unknown` means Sato Hub
   holds no record — not that something is wrong.
@@ -91,6 +90,14 @@ nothing.
 - `onchain_agent_watch` — WRITE. Subscribe a repo, package, MCP endpoint or ERC-8004 agent to a daily Preflight re-check; an email goes out only when the verdict changes. No IP stored. Args: `target`, `email`.
 - `onchain_agent_submit_project` — WRITE. Files a directory submission into the same queue and daily triage as the /submit form; duplicates return the existing entry. Submission is not verification; profit/safety copy is refused. Args: `name`, `website_url`, `github_url`, `category`, `description`.
 - `onchain_agent_register_agent` — WRITE. An agent issues itself a Passport: call once for the challenge, sign with the agent's wallet key, call again. Unsigned registrations wait for a person. The signature proves control of the key only; every passport is Self-Reported. Args: `name`, `wallet`, `signature`, …
+
+- `onchain_agent_scan_recipient` — check a recipient before you pay it. An address on a chain in; five dated answers out (does it only look like an address you pay, is the token the issuer's contract, did the paid party declare it, does it carry a structural mark, is your own wallet being targeted by address poisoning). `unknown` is no record either way, and `go` is never a clearance.
+- `onchain_agent_create_agent` — a goal in plain words in; a runnable TypeScript agent repo out, generated from a template that is re-checked every night, with its policy file, dependency custody lock and manifest. A goal no template answers gets the nearest templates, never improvised code. The goal is not stored.
+
+## Deep research (the two names OpenAI requires)
+
+- `search` — search Sato Hub's index plus its dated answers, agent-economy numbers and wiki. Not for token prices, trading or investment advice.
+- `fetch` — fetch one record by an id that `search` returned.
 
 ## News, changes, wiki, freshness
 

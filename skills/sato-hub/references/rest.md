@@ -85,8 +85,7 @@ The same pure engines the MCP tools call, over plain keyless `GET`. Read-only:
   https://satohub.ai/preflight
 - `/api/route/swap?chain=&token_in=&token_out=&amount=&slippage_bps=&taker=` —
   the chosen venue's quote and calldata, `sato_fee_bps` and `disclosure` stated
-  before anything is signed. Fee schedule: 3 bps stable-to-stable, 15 bps on any
-  volatile leg, taken as a parameter on the aggregator's own quote.
+  before anything is signed. Fee schedule: Sato Route swaps cost 3 bps stable-to-stable, 15 bps with any volatile leg and 25 bps cross-chain, taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
 - `/api/route/agent?capability=&chain=&requires_mcp=&requires_x402=` — the
   chosen Sato Agent Passport with `chosen_by`, or `404 { unknown, reason }`.
 - `/api/route/launch?chain=&goal=&name=&symbol=&deployer=` — the chosen launch

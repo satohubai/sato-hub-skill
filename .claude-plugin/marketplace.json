@@ -6,7 +6,7 @@
     {
       "name": "sato-hub",
       "source": "./",
-      "description": "Query Sato Hub — the scored, daily-rebuilt index of onchain-agent tooling, agent-economy numbers and Agent Passports. Keyless; signs nothing and holds no keys.",
+      "description": "Query Sato Hub — the scored, daily-rebuilt index of onchain-agent tooling, agent-economy numbers and Agent Passports. Keyless: most tools only read, the few that can change Sato Hub state say so, and none signs or moves funds.",
       "version": "1.2.2",
       "author": { "name": "Sato Hub", "url": "https://satohub.ai" },
       "homepage": "https://satohub.ai/mcp",

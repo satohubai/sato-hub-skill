@@ -6,7 +6,8 @@
 // Allows by default. Blocks ONLY when a planted test key was observed leaving
 // (has_observed_key_egress) AND the user set SATO_CHECK_BLOCK=1.
 // Any network error, timeout or odd response: silent, allow.
-// Only the command text is sent — nothing else from the machine.
+// Only the install segments of the command are sent, with env values, MCP
+// headers and URL credentials redacted — nothing else from the machine.
 
 import { pathToFileURL } from "node:url";
 
@@ -48,18 +49,69 @@ export function npxFetches(segment) {
   return false;
 }
 
-/** Drop quoted strings so text inside them is never read as a command. */
-function stripQuoted(command) {
-  return command.replace(/'[^']*'/g, "''").replace(/"(?:[^"\\]|\\.)*"/g, '""');
+const QUOTED = /'[^']*'|"(?:[^"\\]|\\.)*"/g;
+// One shell word, quotes included: `"a b"`, `x="a b"`, `viem@^2`.
+const WORD = String.raw`(?:'[^']*'|"(?:[^"\\]|\\.)*"|[^\s'"])+`;
+
+/** Blank quoted text (same length) so it is never read as a command or an operator. */
+function maskQuoted(s) {
+  return s.replace(QUOTED, (q) => "_".repeat(q.length));
+}
+
+/**
+ * Split on `&&`, `||`, `;`, `|` and newlines outside quotes, keeping the quotes:
+ * `npm install 'viem@^2'` used to be sent as `npm install ''` (2026-10-08).
+ * An installer named inside a quoted string (a commit message, a grep
+ * pattern) stays inside its segment, which does not start with an installer.
+ */
+function splitSegments(command) {
+  const masked = maskQuoted(command);
+  const out = [];
+  let start = 0;
+  for (const m of masked.matchAll(/&&|\|\||;|\||\n/g)) {
+    out.push(command.slice(start, m.index));
+    start = m.index + m[0].length;
+  }
+  out.push(command.slice(start));
+  return out;
+}
+
+/**
+ * Cut a segment at its first shell redirection (`2>&1`, `>log`, `>>log`,
+ * `2>/dev/null`, `&>f`, `<in`, `1>&2`): the rest is not an install target.
+ * A `<` or `>` inside quotes (`'web3>=6'`) or a docs placeholder like
+ * `<API_KEY>` is text. `npm install viem 2>&1` sent "2>&1" as a package (2026-10-08).
+ */
+export function dropRedirections(segment) {
+  const r = maskQuoted(segment).replace(/<[\w.-]+>/g, (p) => "_".repeat(p.length)).search(/[<>]/);
+  if (r < 0) return segment;
+  // A bare fd number or `&` right before the operator belongs to it (`viem2>log` keeps "viem2").
+  return segment.slice(0, r).replace(/(?:^|\s)(?:\d+|&)$/, "").replace(/&$/, "").trim();
+}
+
+/**
+ * Values never leave the machine, quoted or not: `-e KEY=0x…` / `KEY="…"` keep
+ * only the name, an MCP header (`-H "Authorization: Bearer …"`) is dropped, and
+ * so are credentials in a URL. The server needs package names, not values.
+ */
+export function redactValues(segment) {
+  let s = segment
+    .replace(new RegExp(String.raw`(^|\s)([A-Za-z_][A-Za-z0-9_]*)=(?!=)${WORD}`, "g"), "$1$2=<redacted>")
+    .replace(/(\b[a-z][\w+.-]*:\/\/)[^\s/@'"]+@/gi, "$1<redacted>@");
+  if (/^(?:claude|codex|gemini)\s+mcp\s+add\b/.test(s)) {
+    s = s.replace(new RegExp(String.raw`(\s(?:-H|--header)(?:\s+|=))${WORD}`, "g"), "$1<redacted>");
+  }
+  return s;
 }
 
 /** The command segments that install something, cleaned to their command position. */
 export function installSegments(command) {
   if (typeof command !== "string" || !command.trim()) return [];
   const out = [];
-  for (const seg of stripQuoted(command).split(/&&|\|\||;|\||\n/)) {
-    const s = seg.trim().replace(/^[({]+\s*/, "").replace(/^(?:sudo\s+|[A-Z_][A-Z0-9_]*=\S*\s+)+/, "").trim();
-    if (INSTALL_PATTERNS.some((re) => re.test(s)) || npxFetches(s)) out.push(s);
+  const lead = new RegExp(String.raw`^(?:sudo\s+|[A-Z_][A-Z0-9_]*=(?:${WORD})?\s+)+`);
+  for (const seg of splitSegments(command)) {
+    const s = dropRedirections(seg.trim().replace(/^[({]+\s*/, "").replace(lead, "").trim());
+    if (INSTALL_PATTERNS.some((re) => re.test(s)) || npxFetches(s)) out.push(redactValues(s));
   }
   return out;
 }

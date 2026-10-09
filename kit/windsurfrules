@@ -7,7 +7,7 @@ and what to build them from: agent frameworks, MCP servers, wallets and key
 management, x402 and stablecoin payment rails, trading venues, onchain data, and
 which tools support a given chain or standard.
 
-Server: `https://satohub.ai/api/mcp` (Streamable HTTP, read-only, no auth).
+Server: `https://satohub.ai/api/mcp` (Streamable HTTP, no key; most tools only read, and the few that can change Sato Hub state say so and never sign or move funds).
 Add it in Windsurf → Settings → Cascade → MCP servers, or edit
 `~/.codeium/windsurf/mcp_config.json`:
 
@@ -19,9 +19,16 @@ Tools: `onchain_agent_search_resources`, `onchain_agent_get_resource`,
 `onchain_agent_recommend_stack`, `onchain_agent_get_deploy_spec`,
 `onchain_agent_preflight`.
 
+Stack picks and deploy specs carry `trust_spec`: what the pick does with your
+keys and money, from Sato Check, dated. Show its `line` to the user before
+installing and put any `trust_warnings` first. It describes the code; it is not
+a rating.
+
 Always cite the record's `sato_url` — it is the canonical page and shows the
 current status. `Self-Reported` is not verified. `null` means unknown, never
 zero. The Sato Score measures how open, active and verifiable a product is; it
 is not a safety, quality or returns grade.
 
-Before adding a crypto package, MCP server or skill, call onchain_agent_check_install (or GET https://satohub.ai/api/check?target=…) and show the user the four answers.
+`onchain_agent_swap` is non-custodial by contract: it returns an unsigned object
+and never holds a key, signs or broadcasts. Unknown refuses by default, and a
+refusal names its rule. Method: https://satohub.ai/docs/sato-swap
