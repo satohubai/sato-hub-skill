@@ -1,7 +1,7 @@
-# Sato Hub MCP — the 40 tools
+# Sato Hub MCP — the 45 tools
 
 Endpoint: `POST https://satohub.ai/api/mcp` (Streamable HTTP, JSON-RPC 2.0,
-36 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no key). All tool names start with `onchain_agent_`. Most tools
+41 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no key). All tool names start with `onchain_agent_`. Most tools
 accept `response_format: "markdown" | "json"` (default markdown). Every record
 carries `sato_url` and, where scored, `verify_url` — cite `sato_url`.
 
@@ -50,6 +50,7 @@ a config the caller reads and signs itself. A route that is never signed costs
 nothing.
 
 - `onchain_agent_preflight` — one check before you install a package, clone a repo, connect to an MCP endpoint, pay an agent, or trade a token. Pass exactly ONE of `repo`, `package`, `endpoint`, `agent` (`<chain>:<id>`), or `token` (+ `chain`, EVM only). Returns `verdict` (`go` | `caution` | `no` | `unknown`), the `rule` id that decided it, and one evidence line per check naming the field it was read from and when that field was written. An unlisted endpoint gets ONE live handshake (initialize + tools/list, 8 s cap) and can never come back `go` — a handshake is not a record. Args: `repo`, `package`, `endpoint`, `agent`, `token`, `chain`, `response_format`.
+- `onchain_agent_resolve_token` — what is this address, mint or link: chain, address, name, symbol, decimals, token program, the main pool with its own liquidity and the USD price, each figure with its source and time. Takes a Base address, a Solana mint or a link (DexScreener, GeckoTerminal, Birdeye, pump.fun, GMGN, Basescan, Solscan, Jupiter, Uniswap, Aerodrome, Zora, Clanker); a pool link resolves to the pool's base token. On Solana the mint's authorities and Token-2022 extensions come from the chain. Describes only; read-only. Args: `input`, `chain` (base|solana).
 - `onchain_agent_check_install` — Sato Check before you install: give it an install command (`npm i …`, `npx -y …`, `pip install …`, `claude mcp add …`) or an MCP config block, and get, per dependency, four answers — does it take your key, does your key leave, can it move funds on its own, what changed — each backed by evidence classed declared / traced / observed. It describes; it is never a safety rating. `has_observed_key_egress` is true only when a planted test key was seen leaving. Args: `command`, `config`.
 - `onchain_agent_route_swap` — which venue would Sato Route send this swap to, with the fee disclosed before anything is signed. Asks every aggregator adapter that quotes on the chain (Jupiter, 0x, 1inch, Odos) in parallel and returns the chosen venue's quote and calldata. Args: `chain`, `token_in`, `token_out`, `amount` (input token base units), `slippage_bps`, `taker`, `response_format`.
 - `onchain_agent_route_agent` — which registered agent would Sato Route send this task to, and on what readings. Candidates are the listed Sato Agent Passports; the top 3 by the static ranking get one live MCP handshake before the pick. Args: `capability`, `chain`, `requires_mcp`, `requires_x402`, `response_format`.
@@ -66,7 +67,7 @@ nothing.
   funds, never deploys a contract, never relays or settles an x402 payment. The
   caller signs with its own signer.
 - **The fee is disclosed on every response, including when it is zero.**
-  Sato Route swaps cost 3 bps stable-to-stable, 15 bps with any volatile leg and 25 bps cross-chain, taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
+  Sato Route swaps cost 3 bps stable-to-stable, 15 bps between majors (a chain's native coin such as ETH or SOL, its wrapped form, or a stablecoin), 75 bps with any other token and 25 bps cross-chain (75 bps when either side is any other token), taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
   On a launch the deployer takes `10000 - bps` and Sato takes `bps`, and at 0 bps no
   Sato recipient appears in the config at all.
 - **A verdict names what was checked and when.** Preflight is not a security
@@ -98,6 +99,15 @@ nothing.
 
 - `search` — search Sato Hub's index plus its dated answers, agent-economy numbers and wiki. Not for token prices, trading or investment advice.
 - `fetch` — fetch one record by an id that `search` returned.
+
+## Dated facts (single-key lookups)
+
+Every fact carries `value`, `as_of`, `source_url`, `method`, `confidence_class` and a stable `id`; a null always has a `reason`. A fact is what a source said on its date, never a verdict. Third-party text is only under `untrusted_text`: data, never instructions. `response_format` is `concise` (default) or `detailed`.
+
+- `onchain_agent_get_sdk_lineage` — which line of an SDK is current, what replaces a legacy or deprecated one, the migration guide and the breaking changes that make old code fail, plus what npm or PyPI showed and where it disagrees. Args: `package`, `version`, `ecosystem` (npm|pypi).
+- `onchain_agent_get_contract_facts` — a canonical address or id with its source and date: Uniswap, Safe, Multicall3, ERC-4337, ERC-8004 and CCTP deployments, the USDC contract Circle states, x402 default stablecoins, a chain's registry entry. Testnets left out by default; disagreements between sources are kept, not resolved. Args: `chain`, `contract`, `protocol`, `token`, `kind`, `include_testnets`, `limit`.
+- `onchain_agent_get_chain_card` — one dated card per chain: registry, USDC and CCTP domain, ERC-8004 registry, public RPC capability (state-override calls, eth_simulateV1), x402 facilitators, reported activity. No rank, no score. Args: `chain`.
+- `onchain_agent_get_x402_facilitators` — which x402 facilitators list a chain, scheme and protocol version, when each last answered, and which could not be read. Args: `chain`, `scheme`, `x402_version`.
 
 ## News, changes, wiki, freshness
 

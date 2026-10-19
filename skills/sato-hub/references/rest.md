@@ -85,7 +85,14 @@ The same pure engines the MCP tools call, over plain keyless `GET`. Read-only:
   https://satohub.ai/preflight
 - `/api/route/swap?chain=&token_in=&token_out=&amount=&slippage_bps=&taker=` —
   the chosen venue's quote and calldata, `sato_fee_bps` and `disclosure` stated
-  before anything is signed. Fee schedule: Sato Route swaps cost 3 bps stable-to-stable, 15 bps with any volatile leg and 25 bps cross-chain, taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
+  before anything is signed. Fee schedule: Sato Route swaps cost 3 bps stable-to-stable, 15 bps between majors (a chain's native coin such as ETH or SOL, its wrapped form, or a stablecoin), 75 bps with any other token and 25 bps cross-chain (75 bps when either side is any other token), taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
+- `/api/token/resolve?input=<address|mint|link>&chain=base|solana` — what an
+  address, a Solana mint or a link (DexScreener, GeckoTerminal, Birdeye,
+  pump.fun, GMGN, Basescan, Solscan, Jupiter, Uniswap, Aerodrome, Zora, Clanker)
+  is: chain, name, symbol, decimals, token program, the main pool with its own
+  liquidity and the USD price, each figure with its source and time; on Solana
+  the mint's authorities and Token-2022 extensions. A pool link resolves to the
+  pool's base token. Describes only; `null` is unknown and `gaps` says why.
 - `/api/route/agent?capability=&chain=&requires_mcp=&requires_x402=` — the
   chosen Sato Agent Passport with `chosen_by`, or `404 { unknown, reason }`.
 - `/api/route/launch?chain=&goal=&name=&symbol=&deployer=` — the chosen launch

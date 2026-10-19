@@ -238,7 +238,7 @@ curl -sS 'https://satohub.ai/api/route/swap?chain=Solana&token_in=USDC&token_out
   "quote": { "venue": "jupiter-aggregator", "amount_in": "1000000", "amount_out": "9820792",
              "chain": "Solana", "source_url": "https://developers.jup.ag/docs/swap-api/add-fees-to-swap" },
   "sato_fee_bps": 0,
-  "disclosure": "No Sato fee is charged on this quote: Jupiter takes its platform fee into an on-chain referral token account, and none is configured for this deployment … The schedule, when a referral account exists, is 3 bps stable-to-stable and 15 bps on any volatile leg. Sato Hub does not sign, hold or move funds.",
+  "disclosure": "No Sato fee is charged on this quote: Jupiter takes its platform fee into an on-chain referral token account, and none is configured for this deployment … The schedule, when a referral account exists: Stable-to-stable pairs are 3 bps; a pair of majors (a chain's native coin such as ETH or SOL, its wrapped form, or a stablecoin) is 15 bps; a pair with any other token is 75 bps; cross-chain is 25 bps, or 75 bps when either side is any other token. Sato Hub does not sign, hold or move funds.",
   "chosen_by": [
     { "signal": "Observed record", "value": "100% of Sato Hub's own daily checks succeeded over 60 day(s). This is the share of OUR checks that succeeded, never uptime — a failure can be on our side.",
       "source_field": "resources.uptime_observed.success_rate_pct" }

@@ -16,11 +16,11 @@ Preflight verdicts and a first action).
 **Non-custodial.** Nothing in this skill signs, holds a key, deploys, relays or
 moves funds. A route returns calldata or a config the caller reads and signs
 itself; a route that is never signed costs nothing. The Sato fee is stated on
-every response, including when it is zero. Sato Route swaps cost 3 bps stable-to-stable, 15 bps with any volatile leg and 25 bps cross-chain, taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
+every response, including when it is zero. Sato Route swaps cost 3 bps stable-to-stable, 15 bps between majors (a chain's native coin such as ETH or SOL, its wrapped form, or a stablecoin), 75 bps with any other token and 25 bps cross-chain (75 bps when either side is any other token), taken as a parameter on the aggregator's own quote inside the transaction you sign; a failed, reverted or unsigned trade pays nothing. A token launch carries a disclosed share of the creator's LP fee, stated as fee.bps on every launch response, including when it is 0. Sato OS charges 3 / 15 bps on its own spot swap rail and a 3 bps perp builder fee, with no cross-chain tier. Some venues keep a share or pay later, and every quote says which.
 Everything that costs money is listed at https://satohub.ai/pricing.
 
 Keyless. Hosted MCP endpoint: `POST https://satohub.ai/api/mcp`
-(Streamable HTTP, 40 tools — 36 read-only, four can change Sato Hub state).
+(Streamable HTTP, 45 tools — 41 read-only, four can change Sato Hub state).
 Docs: https://satohub.ai/mcp
 
 The skill contains the tool reference, the REST fallback, a curl wrapper that
