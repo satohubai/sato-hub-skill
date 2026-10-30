@@ -20,7 +20,7 @@ every response, including when it is zero. Sato Route swaps cost 3 bps stable-to
 Everything that costs money is listed at https://satohub.ai/pricing.
 
 Keyless. Hosted MCP endpoint: `POST https://satohub.ai/api/mcp`
-(Streamable HTTP, 45 tools — 41 read-only, four can change Sato Hub state).
+(Streamable HTTP, 47 tools — 41 read-only, six can change Sato Hub state).
 Docs: https://satohub.ai/mcp
 
 The skill contains the tool reference, the REST fallback, a curl wrapper that

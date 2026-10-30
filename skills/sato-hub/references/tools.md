@@ -1,7 +1,7 @@
-# Sato Hub MCP — the 45 tools
+# Sato Hub MCP — the 47 tools
 
 Endpoint: `POST https://satohub.ai/api/mcp` (Streamable HTTP, JSON-RPC 2.0,
-41 read-only; the four WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no key). All tool names start with `onchain_agent_`. Most tools
+41 read-only; the six WRITE tools marked below can change Sato Hub state and none of them signs, holds or broadcasts funds; no key). All tool names start with `onchain_agent_`. Most tools
 accept `response_format: "markdown" | "json"` (default markdown). Every record
 carries `sato_url` and, where scored, `verify_url` — cite `sato_url`.
 
@@ -91,6 +91,8 @@ nothing.
 - `onchain_agent_watch` — WRITE. Subscribe a repo, package, MCP endpoint or ERC-8004 agent to a daily Preflight re-check; an email goes out only when the verdict changes. No IP stored. Args: `target`, `email`.
 - `onchain_agent_submit_project` — WRITE. Files a directory submission into the same queue and daily triage as the /submit form; duplicates return the existing entry. Submission is not verification; profit/safety copy is refused. Args: `name`, `website_url`, `github_url`, `category`, `description`.
 - `onchain_agent_register_agent` — WRITE. An agent issues itself a Passport: call once for the challenge, sign with the agent's wallet key, call again. Unsigned registrations wait for a person. The signature proves control of the key only; every passport is Self-Reported. Args: `name`, `wallet`, `signature`, …
+- `onchain_agent_join_passport` — WRITE. A free passport by signing with the agent's own wallets, EVM and Solana together: call once with no signatures to be told the exact message each wallet signs, then again with the signatures. The passport is public and Self-Reported; a signature proves control of a key only; joining earns no points. It stays out of search engines and the public list until one of its wallets has sent an onchain transaction. `claim_sha256` is the digest of an owner claim code the agent generates itself (the server never sees the code). The same step over HTTP is `POST https://satohub.ai/api/passport/join`. Args: `wallets`, `primary`, `name`, `claim_sha256`, `issued_at`.
+- `onchain_agent_passport_action` — WRITE. Signed changes to a passport by a wallet on it: add_wallet, prove_wallet, remove_wallet, set_primary, update_profile, issue_claim, unlink_owner. Unsigned, it answers the message to sign. The same step over HTTP is `POST https://satohub.ai/api/passport/action`. Args: `action`, `passport_id`, `authorizer`, `wallet`, `wallets`, `remove`, `patch`, `claim_sha256`, `issued_at`.
 
 - `onchain_agent_scan_recipient` — check a recipient before you pay it. An address on a chain in; five dated answers out (does it only look like an address you pay, is the token the issuer's contract, did the paid party declare it, does it carry a structural mark, is your own wallet being targeted by address poisoning). `unknown` is no record either way, and `go` is never a clearance.
 - `onchain_agent_create_agent` — a goal in plain words in; a runnable TypeScript agent repo out, generated from a template that is re-checked every night, with its policy file, dependency custody lock and manifest. A goal no template answers gets the nearest templates, never improvised code. The goal is not stored.

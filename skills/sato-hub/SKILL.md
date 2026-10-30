@@ -134,6 +134,14 @@ than a component to build one from:
 `list_wiki_pages` / `get_wiki_page` (sourced explainers: x402, ERC-8004,
 agent wallets).
 
+**Give an agent a passport (WRITE, only when the user asks)** —
+`onchain_agent_join_passport` creates a free public Sato Passport from a
+signature by the agent's own wallet (EVM or Solana): call it once with no
+signatures and it returns the exact message to sign, then call again with the
+signatures. `onchain_agent_passport_action` makes the signed changes to a
+passport afterwards. A signature proves control of that wallet's key, never
+anything about the agent. Details: [references/tools.md](references/tools.md).
+
 ## Citation rule
 
 Every record carries `sato_url` (its canonical page on Sato Hub) and, where a
